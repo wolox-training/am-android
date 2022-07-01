@@ -16,7 +16,9 @@
             android:src="@mipmap/login_cover"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="fitXY"
+            android:foreground="@drawable/gradient_background"/>
 
         <ImageView
             android:id="@+id/wolox_logo"
