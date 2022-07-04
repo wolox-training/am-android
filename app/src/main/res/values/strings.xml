@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="description_login_cover">Wolox login cover</string>
+    <string name="description_wolox_logo">Wolox logo</string>
+    <string name="hint_first_name">First Name (recommended)</string>
+    <string name="hint_last_name">Last Name (recommended)</string>
+    <string name="terms_and_conditions">By joining you agree to our <u>Terms &amp; Conditions</u>.</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
 </resources>
