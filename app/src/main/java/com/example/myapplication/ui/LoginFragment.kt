@@ -21,22 +21,35 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         binding.lifecycleOwner = this
-        binding.loginViewModel = loginViewModel
-        val savedEmail = loginViewModel.sharedPreferences.getString("USERNAME", null)
-        val savedPassword = loginViewModel.sharedPreferences.getString("PASSWORD", null)
-        loginViewModel.setInformation(savedEmail, savedPassword)
+        val emailEdit = binding.firstNameEdit
+        val passwordEdit = binding.lastNameEdit
+        binding.logInButton.setOnClickListener { loginViewModel.fieldsValuesValidation(emailEdit, passwordEdit) }
+        loginViewModel.retrieveSavedUser()
 
-        loginViewModel.toast.observe(viewLifecycleOwner) {
+
+        loginViewModel.emptyFieldsError.observe(viewLifecycleOwner) {
             if (it == true) {
                 Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
-                loginViewModel.toast.value = false
+                loginViewModel.emptyFieldsErrorShown()
             }
         }
 
-        loginViewModel.error.observe(viewLifecycleOwner) {
+        loginViewModel.invalidEmail.observe(viewLifecycleOwner) {
             if (it == true) {
-                binding.firstNameEdit.error = "Invalid email address"
-                loginViewModel.save.value = false
+                emailEdit.error = "Invalid email address"
+                loginViewModel.invalidEmailErrorShown()
+            }
+        }
+
+        loginViewModel.email.observe(viewLifecycleOwner) {
+            it?.let {
+                emailEdit.setText(it)
+            }
+        }
+
+        loginViewModel.password.observe(viewLifecycleOwner) {
+            it?.let {
+                passwordEdit.setText(it)
             }
         }
 
