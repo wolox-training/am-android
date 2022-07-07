@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.vm.LoginViewModel
 
@@ -20,39 +21,53 @@ class LoginFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        binding.lifecycleOwner = this
-        val emailEdit = binding.firstNameEdit
-        val passwordEdit = binding.lastNameEdit
-        binding.logInButton.setOnClickListener { loginViewModel.fieldsValuesValidation(emailEdit, passwordEdit) }
+        binding.also { binding ->
+            binding.logInButton.setOnClickListener {
+                val emailText = binding.firstNameEdit.text.toString()
+                val passwordText = binding.lastNameEdit.text.toString()
+                loginViewModel.fieldsValuesValidation(emailText, passwordText)
+            }
+        }
         loginViewModel.retrieveSavedUser()
+        emptyFieldsObserver()
+        invalidEmailObserver()
+        retrieveSavedEmailObserver()
+        retrieveSavedPasswordObserver()
 
+        return binding.root
+    }
 
+    private fun emptyFieldsObserver() {
         loginViewModel.emptyFieldsError.observe(viewLifecycleOwner) {
-            if (it == true) {
-                Toast.makeText(context, "All fields are required", Toast.LENGTH_SHORT).show()
+            it?.let {
+                Toast.makeText(context, getString(R.string.all_fields_required), Toast.LENGTH_SHORT).show()
                 loginViewModel.emptyFieldsErrorShown()
             }
         }
+    }
 
+    private fun invalidEmailObserver() {
         loginViewModel.invalidEmail.observe(viewLifecycleOwner) {
-            if (it == true) {
-                emailEdit.error = "Invalid email address"
+            it?.let {
+                binding.firstNameEdit.error = getString(R.string.invalid_email)
                 loginViewModel.invalidEmailErrorShown()
             }
         }
+    }
 
+    private fun retrieveSavedEmailObserver() {
         loginViewModel.email.observe(viewLifecycleOwner) {
             it?.let {
-                emailEdit.setText(it)
+                binding.firstNameEdit.setText(it)
             }
         }
+    }
 
+    private fun retrieveSavedPasswordObserver() {
         loginViewModel.password.observe(viewLifecycleOwner) {
             it?.let {
-                passwordEdit.setText(it)
+                binding.lastNameEdit.setText(it)
             }
         }
-
-        return binding.root
     }
 }

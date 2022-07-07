@@ -7,4 +7,6 @@
     <string name="terms_and_conditions">By joining you agree to our <u>Terms &amp; Conditions</u>.</string>
     <string name="log_in">Log in</string>
     <string name="sign_up">Sign up</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="all_fields_required">All fields are required</string>
 </resources>

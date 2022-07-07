@@ -27,34 +27,34 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         get() = _invalidEmail
 
     private val sharedPreferences: SharedPreferences =
-        app.applicationContext.getSharedPreferences("PREFERENCE_NAME", Context.MODE_PRIVATE)
+        app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    fun fieldsValuesValidation(emailValue: EditText, passwordValue: EditText) {
-        _email.value = emailValue.text.toString()
-        _password.value = passwordValue.text.toString()
-        if (email.value == null && password.value == null) {
+    fun fieldsValuesValidation(emailValue: String, passwordValue: String) {
+        if (emailValue.isEmpty() || passwordValue.isEmpty()) {
             _emptyFieldsError.value = true
         } else {
-            emailValidation()
+            emailValidation(emailValue, passwordValue)
         }
     }
 
-    private fun emailValidation() {
-        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-        val emailComparable = email.value!!.trim()
+    private fun emailValidation(emailValue: String, passwordValue: String) {
+        val emailPattern = EMAIL_REGEX
+        val emailComparable = emailValue.trim()
         if (emailComparable.matches(emailPattern.toRegex())) {
             val editor = sharedPreferences.edit()
-            editor.putString("USERNAME", email.value)
-            editor.putString("PASSWORD", password.value)
-            editor.commit()
+            editor.also {
+                it.putString(USERNAME, emailValue)
+                it.putString(PASSWORD, passwordValue)
+                it.commit()
+            }
         } else {
             _invalidEmail.value = true
         }
     }
 
     fun retrieveSavedUser() {
-        val savedEmail = sharedPreferences.getString("USERNAME", null)
-        val savedPassword = sharedPreferences.getString("PASSWORD", null)
+        val savedEmail = sharedPreferences.getString(USERNAME, null)
+        val savedPassword = sharedPreferences.getString(PASSWORD, null)
         if (savedEmail != null && savedPassword != null) {
             _email.value = savedEmail
             _password.value = savedPassword
@@ -62,10 +62,17 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun emptyFieldsErrorShown() {
-        _emptyFieldsError.value = false
+        _emptyFieldsError.value = null
     }
 
     fun invalidEmailErrorShown() {
-        _invalidEmail.value = false
+        _invalidEmail.value = null
+    }
+
+    companion object {
+        private const val USERNAME: String = "USERNAME"
+        private const val PASSWORD: String = "PASSWORD"
+        private const val SHARED_PREFERENCES_NAME: String = "PREFERENCE_NAME"
+        private const val EMAIL_REGEX: String = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
     }
 }
