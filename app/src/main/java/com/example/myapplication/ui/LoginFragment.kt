@@ -21,10 +21,14 @@ class LoginFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        binding.also { binding ->
-            binding.logInButton.setOnClickListener {
-                val emailText = binding.firstNameEdit.text.toString()
-                val passwordText = binding.lastNameEdit.text.toString()
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        with(binding) {
+            logInButton.setOnClickListener {
+                val emailText = firstNameEdit.text.toString()
+                val passwordText = lastNameEdit.text.toString()
                 loginViewModel.fieldsValuesValidation(emailText, passwordText)
             }
         }
@@ -33,8 +37,6 @@ class LoginFragment : Fragment() {
         invalidEmailObserver()
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
-
-        return binding.root
     }
 
     private fun emptyFieldsObserver() {
