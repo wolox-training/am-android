@@ -3,7 +3,6 @@ package com.example.myapplication.vm
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.widget.EditText
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -33,6 +32,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     private val _signUpClick = MutableLiveData<Boolean>()
     val signUpClick: LiveData<Boolean>
         get() = _signUpClick
+
+    private val _termsAndConditionsClick = MutableLiveData<Boolean>()
+    val termsAndConditionsClick: LiveData<Boolean>
+        get() = _termsAndConditionsClick
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -74,6 +77,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _signUpClick.value = true
     }
 
+    fun termsAndConditionsClicked() {
+        _termsAndConditionsClick.value = true
+    }
+
     fun emptyFieldsErrorShown() {
         _emptyFieldsError.value = null
     }
@@ -88,6 +95,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     fun signUpNavigated() {
         _signUpClick.value = null
+    }
+
+    fun termsAndConditionsIntentDone() {
+        _termsAndConditionsClick.value = null
     }
 
     companion object {
