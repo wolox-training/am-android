@@ -30,6 +30,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val validEmail: LiveData<Boolean>
         get() = _validEmail
 
+    private val _signUpClick = MutableLiveData<Boolean>()
+    val signUpClick: LiveData<Boolean>
+        get() = _signUpClick
+
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
@@ -66,6 +70,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun signUpClicked() {
+        _signUpClick.value = true
+    }
+
     fun emptyFieldsErrorShown() {
         _emptyFieldsError.value = null
     }
@@ -76,6 +84,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     fun homePageNavigated() {
         _validEmail.value = null
+    }
+
+    fun signUpNavigated() {
+        _signUpClick.value = null
     }
 
     companion object {

@@ -31,6 +31,9 @@ class LoginFragment : Fragment() {
                 val passwordText = lastNameEdit.text.toString()
                 loginViewModel.fieldsValuesValidation(emailText, passwordText)
             }
+            signUpButton.setOnClickListener {
+                loginViewModel.signUpClicked()
+            }
         }
         loginViewModel.retrieveSavedUser()
         emptyFieldsObserver()
@@ -38,6 +41,7 @@ class LoginFragment : Fragment() {
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
         validEmailObserver()
+        signUpClickObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -81,6 +85,17 @@ class LoginFragment : Fragment() {
                     LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
                 )
                 loginViewModel.homePageNavigated()
+            }
+        }
+    }
+
+    private fun signUpClickObserver() {
+        loginViewModel.signUpClick.observe(viewLifecycleOwner) {
+            it?.let {
+                this.findNavController().navigate(
+                    LoginFragmentDirections.actionLoginFragmentToSignUpFragment()
+                )
+                loginViewModel.signUpNavigated()
             }
         }
     }
