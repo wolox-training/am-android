@@ -26,6 +26,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val invalidEmail: LiveData<Boolean>
         get() = _invalidEmail
 
+    private val _validEmail = MutableLiveData<Boolean>()
+    val validEmail: LiveData<Boolean>
+        get() = _validEmail
+
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
@@ -47,6 +51,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 it.putString(PASSWORD, passwordValue)
                 it.commit()
             }
+            _validEmail.value = true
         } else {
             _invalidEmail.value = true
         }
@@ -67,6 +72,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     fun invalidEmailErrorShown() {
         _invalidEmail.value = null
+    }
+
+    fun homePageNavigated() {
+        _validEmail.value = null
     }
 
     companion object {
