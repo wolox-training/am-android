@@ -1,6 +1,5 @@
 package com.example.myapplication.ui
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -40,10 +38,10 @@ class LoginFragment : Fragment() {
                 loginViewModel.fieldsValuesValidation(emailText, passwordText)
             }
             signUpButton.setOnClickListener {
-                loginViewModel.signUpClicked()
+                goToSignUp()
             }
             termsAndConditions.setOnClickListener {
-                loginViewModel.termsAndConditionsClicked()
+                goToTermsAndConditions()
             }
         }
         loginViewModel.retrieveSavedUser()
@@ -52,8 +50,6 @@ class LoginFragment : Fragment() {
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
         validEmailObserver()
-        signUpClickObserver()
-        termsAndConditionsClickObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -62,15 +58,6 @@ class LoginFragment : Fragment() {
                 Toast.makeText(context, getString(R.string.all_fields_required), Toast.LENGTH_SHORT)
                     .show()
                 loginViewModel.emptyFieldsErrorShown()
-            }
-        }
-    }
-
-    private fun invalidEmailObserver() {
-        loginViewModel.invalidEmail.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.firstNameEdit.error = getString(R.string.invalid_email)
-                loginViewModel.invalidEmailErrorShown()
             }
         }
     }
@@ -93,34 +80,37 @@ class LoginFragment : Fragment() {
 
     private fun validEmailObserver() {
         loginViewModel.validEmail.observe(viewLifecycleOwner) {
-            it?.let {
+            if (it == true) {
                 this.findNavController().navigate(
                     LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
                 )
-                loginViewModel.homePageNavigated()
+                loginViewModel.resetValidEmailValue()
             }
         }
     }
 
-    private fun signUpClickObserver() {
-        loginViewModel.signUpClick.observe(viewLifecycleOwner) {
-            it?.let {
-                this.findNavController().navigate(
-                    LoginFragmentDirections.actionLoginFragmentToSignUpFragment()
-                )
-                loginViewModel.signUpNavigated()
+    private fun invalidEmailObserver() {
+        loginViewModel.validEmail.observe(viewLifecycleOwner) {
+            if (it == false) {
+                binding.firstNameEdit.error = getString(R.string.invalid_email)
+                loginViewModel.resetValidEmailValue()
             }
         }
     }
 
-    private fun termsAndConditionsClickObserver() {
-        loginViewModel.termsAndConditionsClick.observe(viewLifecycleOwner) {
-            it?.let {
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wolox.com.ar/"))
-                startActivity(browserIntent)
-                loginViewModel.termsAndConditionsIntentDone()
-            }
-        }
+    private fun goToSignUp() {
+        this.findNavController().navigate(
+            LoginFragmentDirections.actionLoginFragmentToSignUpFragment()
+        )
+    }
+
+    private fun goToTermsAndConditions() {
+        val browserIntent =
+            Intent(Intent.ACTION_VIEW, Uri.parse(URL_WOLOX))
+        startActivity(browserIntent)
+    }
+
+    companion object {
+        private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
     }
 }

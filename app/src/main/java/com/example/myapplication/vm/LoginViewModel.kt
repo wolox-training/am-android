@@ -21,21 +21,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val emptyFieldsError: LiveData<Boolean>
         get() = _emptyFieldsError
 
-    private val _invalidEmail = MutableLiveData<Boolean>()
-    val invalidEmail: LiveData<Boolean>
-        get() = _invalidEmail
-
     private val _validEmail = MutableLiveData<Boolean>()
     val validEmail: LiveData<Boolean>
         get() = _validEmail
-
-    private val _signUpClick = MutableLiveData<Boolean>()
-    val signUpClick: LiveData<Boolean>
-        get() = _signUpClick
-
-    private val _termsAndConditionsClick = MutableLiveData<Boolean>()
-    val termsAndConditionsClick: LiveData<Boolean>
-        get() = _termsAndConditionsClick
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -60,7 +48,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
             }
             _validEmail.value = true
         } else {
-            _invalidEmail.value = true
+            _validEmail.value = false
         }
     }
 
@@ -73,32 +61,12 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun signUpClicked() {
-        _signUpClick.value = true
-    }
-
-    fun termsAndConditionsClicked() {
-        _termsAndConditionsClick.value = true
-    }
-
     fun emptyFieldsErrorShown() {
         _emptyFieldsError.value = null
     }
 
-    fun invalidEmailErrorShown() {
-        _invalidEmail.value = null
-    }
-
-    fun homePageNavigated() {
+    fun resetValidEmailValue() {
         _validEmail.value = null
-    }
-
-    fun signUpNavigated() {
-        _signUpClick.value = null
-    }
-
-    fun termsAndConditionsIntentDone() {
-        _termsAndConditionsClick.value = null
     }
 
     companion object {
