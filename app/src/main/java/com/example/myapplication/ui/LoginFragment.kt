@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
-import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.vm.LoginViewModel
@@ -18,9 +20,13 @@ class LoginFragment : Fragment() {
 
     private lateinit var loginViewModel: LoginViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        loginViewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         return binding.root
     }
 
@@ -31,28 +37,27 @@ class LoginFragment : Fragment() {
                 val passwordText = lastNameEdit.text.toString()
                 loginViewModel.fieldsValuesValidation(emailText, passwordText)
             }
+            signUpButton.setOnClickListener {
+                goToSignUp()
+            }
+            termsAndConditions.setOnClickListener {
+                goToTermsAndConditions()
+            }
         }
         loginViewModel.retrieveSavedUser()
         emptyFieldsObserver()
         invalidEmailObserver()
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
+        validEmailObserver()
     }
 
     private fun emptyFieldsObserver() {
         loginViewModel.emptyFieldsError.observe(viewLifecycleOwner) {
             it?.let {
-                Toast.makeText(context, getString(R.string.all_fields_required), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.all_fields_required), Toast.LENGTH_SHORT)
+                    .show()
                 loginViewModel.emptyFieldsErrorShown()
-            }
-        }
-    }
-
-    private fun invalidEmailObserver() {
-        loginViewModel.invalidEmail.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.firstNameEdit.error = getString(R.string.invalid_email)
-                loginViewModel.invalidEmailErrorShown()
             }
         }
     }
@@ -71,5 +76,41 @@ class LoginFragment : Fragment() {
                 binding.lastNameEdit.setText(it)
             }
         }
+    }
+
+    private fun validEmailObserver() {
+        loginViewModel.validEmail.observe(viewLifecycleOwner) {
+            if (it == true) {
+                this.findNavController().navigate(
+                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
+                )
+                loginViewModel.resetValidEmailValue()
+            }
+        }
+    }
+
+    private fun invalidEmailObserver() {
+        loginViewModel.validEmail.observe(viewLifecycleOwner) {
+            if (it == false) {
+                binding.firstNameEdit.error = getString(R.string.invalid_email)
+                loginViewModel.resetValidEmailValue()
+            }
+        }
+    }
+
+    private fun goToSignUp() {
+        this.findNavController().navigate(
+            LoginFragmentDirections.actionLoginFragmentToSignUpFragment()
+        )
+    }
+
+    private fun goToTermsAndConditions() {
+        val browserIntent =
+            Intent(Intent.ACTION_VIEW, Uri.parse(URL_WOLOX))
+        startActivity(browserIntent)
+    }
+
+    companion object {
+        private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
     }
 }
