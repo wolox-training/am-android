@@ -21,7 +21,7 @@ private val retrofit = Retrofit.Builder()
 
 interface ApiService {
     @GET("/auth/sign_in")
-    fun getProperties():
+    suspend fun getProperties():
         Call<List<UserInfo>>
 }
 

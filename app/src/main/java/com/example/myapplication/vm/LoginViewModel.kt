@@ -6,8 +6,10 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.network.Api
 import com.example.myapplication.network.UserInfo
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,17 +82,14 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     }
 
      private fun getUserInfo() {
-        Api.retrofitService.getProperties().enqueue(
-            object: Callback<List<UserInfo>> {
-                override fun onResponse(call: Call<List<UserInfo>>, response: Response<List<UserInfo>>) {
-                    _response.value = "Success: ${response.body()?.size} users retrieved"
-
-                }
-
-                override fun onFailure(call: Call<List<UserInfo>>, t: Throwable) {
-                    _response.value = "Failure: " + t.message
-                }
-            })
+         viewModelScope.launch {
+             try {
+                 val listResult = Api.retrofitService.getProperties()
+                 _response.value = "Success: $listResult"
+             } catch (e: Exception) {
+                 _response.value = "Failure: ${e.message}"
+             }
+         }
     }
 
     companion object {
