@@ -81,9 +81,11 @@ class LoginFragment : Fragment() {
     private fun validEmailObserver() {
         loginViewModel.validEmail.observe(viewLifecycleOwner) {
             if (it == true) {
-                this.findNavController().navigate(
-                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
-                )
+                Toast.makeText(context, loginViewModel.response.value.toString(), Toast.LENGTH_SHORT)
+                    .show()
+                // this.findNavController().navigate(
+                //     LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
+                // )
                 loginViewModel.resetValidEmailValue()
             }
         }

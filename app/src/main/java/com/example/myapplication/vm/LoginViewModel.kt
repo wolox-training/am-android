@@ -6,6 +6,11 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.myapplication.network.Api
+import com.example.myapplication.network.UserInfo
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -24,6 +29,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     private val _validEmail = MutableLiveData<Boolean>()
     val validEmail: LiveData<Boolean>
         get() = _validEmail
+
+    private val _response = MutableLiveData<String>()
+    val response: LiveData<String>
+        get() = _response
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -46,6 +55,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 it.putString(PASSWORD, passwordValue)
                 it.commit()
             }
+            getUserInfo()
             _validEmail.value = true
         } else {
             _validEmail.value = false
@@ -67,6 +77,20 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     fun resetValidEmailValue() {
         _validEmail.value = null
+    }
+
+     private fun getUserInfo() {
+        Api.retrofitService.getProperties().enqueue(
+            object: Callback<List<UserInfo>> {
+                override fun onResponse(call: Call<List<UserInfo>>, response: Response<List<UserInfo>>) {
+                    _response.value = "Success: ${response.body()?.size} users retrieved"
+
+                }
+
+                override fun onFailure(call: Call<List<UserInfo>>, t: Throwable) {
+                    _response.value = "Failure: " + t.message
+                }
+            })
     }
 
     companion object {
