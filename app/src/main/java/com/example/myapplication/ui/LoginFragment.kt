@@ -50,6 +50,7 @@ class LoginFragment : Fragment() {
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
         validEmailObserver()
+        responseObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -81,12 +82,20 @@ class LoginFragment : Fragment() {
     private fun validEmailObserver() {
         loginViewModel.validEmail.observe(viewLifecycleOwner) {
             if (it == true) {
-                Toast.makeText(context, loginViewModel.response.value.toString(), Toast.LENGTH_SHORT)
-                    .show()
                 // this.findNavController().navigate(
                 //     LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
                 // )
                 loginViewModel.resetValidEmailValue()
+            }
+        }
+    }
+
+    private fun responseObserver() {
+        loginViewModel.response.observe(viewLifecycleOwner) {
+            it?.let {
+                Toast.makeText(context, loginViewModel.response.value.toString(), Toast.LENGTH_SHORT)
+                    .show()
+                loginViewModel.resetResponse()
             }
         }
     }

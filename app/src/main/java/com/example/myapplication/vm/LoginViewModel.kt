@@ -7,14 +7,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.network.Api
-import com.example.myapplication.network.UserInfo
+import com.example.myapplication.network.UserRepository
+import com.example.myapplication.network.data.UserAuth
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginViewModel(app: Application) : AndroidViewModel(app) {
+
+    private val userRepository = UserRepository()
 
     private val _email = MutableLiveData<String?>()
     val email: LiveData<String?>
@@ -57,7 +57,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 it.putString(PASSWORD, passwordValue)
                 it.commit()
             }
-            getUserInfo()
+            getUserInfo(UserAuth(emailValue, passwordValue))
             _validEmail.value = true
         } else {
             _validEmail.value = false
@@ -81,20 +81,32 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _validEmail.value = null
     }
 
-     private fun getUserInfo() {
+    fun resetResponse() {
+        _response.value = null
+    }
+
+     private fun getUserInfo(userAuth: UserAuth) {
          viewModelScope.launch {
-             try {
-                 val listResult = Api.retrofitService.getProperties()
-                 _response.value = "Success: $listResult"
-             } catch (e: Exception) {
-                 _response.value = "Failure: ${e.message}"
+             val response = userRepository.getUserInfo(userAuth)
+             if(response.isSuccessful){
+                 val editor = sharedPreferences.edit()
+                 editor.also {
+                     it.putString(USER_INFO, Gson().toJson(response.body()))
+                     it.commit()
+                 }
+                 _response.value = SUCCESS
+             }else{
+                 _response.value = FAILURE
              }
          }
     }
 
     companion object {
+        private const val SUCCESS: String = "Success"
+        private const val FAILURE: String = "Failure"
         private const val USERNAME: String = "USERNAME"
         private const val PASSWORD: String = "PASSWORD"
+        private const val USER_INFO: String = "USER_INFO"
         private const val SHARED_PREFERENCES_NAME: String = "PREFERENCE_NAME"
         private const val EMAIL_REGEX: String = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
     }
