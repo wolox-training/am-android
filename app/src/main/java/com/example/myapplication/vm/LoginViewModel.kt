@@ -32,9 +32,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val validEmail: LiveData<Boolean>
         get() = _validEmail
 
-    private val _response = MutableLiveData<String>()
-    val response: LiveData<String>
-        get() = _response
+    private val _userResponseIsSuccessful = MutableLiveData<Boolean>()
+    val userResponseIsSuccessful: LiveData<Boolean>
+        get() = _userResponseIsSuccessful
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -57,7 +57,6 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 it.putString(PASSWORD, passwordValue)
                 it.commit()
             }
-            getUserInfo(UserAuth(emailValue, passwordValue))
             _validEmail.value = true
         } else {
             _validEmail.value = false
@@ -81,11 +80,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _validEmail.value = null
     }
 
-    fun resetResponse() {
-        _response.value = null
-    }
-
-     private fun getUserInfo(userAuth: UserAuth) {
+     fun getUserInfo(userAuth: UserAuth) {
          viewModelScope.launch {
              val response = userRepository.getUserInfo(userAuth)
              if(response.isSuccessful){
@@ -94,16 +89,14 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                      it.putString(USER_INFO, Gson().toJson(response.body()))
                      it.commit()
                  }
-                 _response.value = SUCCESS
+                 _userResponseIsSuccessful.value = true
              }else{
-                 _response.value = FAILURE
+                 _userResponseIsSuccessful.value = false
              }
          }
     }
 
     companion object {
-        private const val SUCCESS: String = "Success"
-        private const val FAILURE: String = "Failure"
         private const val USERNAME: String = "USERNAME"
         private const val PASSWORD: String = "PASSWORD"
         private const val USER_INFO: String = "USER_INFO"
