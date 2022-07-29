@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
+import com.example.myapplication.network.data.UserAuth
 import com.example.myapplication.vm.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -46,10 +47,10 @@ class LoginFragment : Fragment() {
         }
         loginViewModel.retrieveSavedUser()
         emptyFieldsObserver()
-        invalidEmailObserver()
         retrieveSavedEmailObserver()
         retrieveSavedPasswordObserver()
         validEmailObserver()
+        userResponseObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -81,19 +82,29 @@ class LoginFragment : Fragment() {
     private fun validEmailObserver() {
         loginViewModel.validEmail.observe(viewLifecycleOwner) {
             if (it == true) {
-                this.findNavController().navigate(
-                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
-                )
+                with(binding) {
+                    val emailText = firstNameEdit.text.toString()
+                    val passwordText = lastNameEdit.text.toString()
+                    loginViewModel.getUserInfo(UserAuth(emailText, passwordText))
+                }
+            } else {
+                binding.firstNameEdit.error = getString(R.string.invalid_email)
                 loginViewModel.resetValidEmailValue()
             }
         }
     }
 
-    private fun invalidEmailObserver() {
-        loginViewModel.validEmail.observe(viewLifecycleOwner) {
-            if (it == false) {
-                binding.firstNameEdit.error = getString(R.string.invalid_email)
-                loginViewModel.resetValidEmailValue()
+    private fun userResponseObserver() {
+        loginViewModel.userResponseIsSuccessful.observe(viewLifecycleOwner) {
+            if (it == true) {
+                Toast.makeText(context, SUCCESS, Toast.LENGTH_SHORT)
+                    .show()
+                this.findNavController().navigate(
+                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
+                )
+            } else {
+                Toast.makeText(context, FAILURE, Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -112,5 +123,7 @@ class LoginFragment : Fragment() {
 
     companion object {
         private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
+        private const val SUCCESS: String = "Success"
+        private const val FAILURE: String = "Failure"
     }
 }

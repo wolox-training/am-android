@@ -6,8 +6,15 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.network.UserRepository
+import com.example.myapplication.network.data.UserAuth
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 class LoginViewModel(app: Application) : AndroidViewModel(app) {
+
+    private val userRepository = UserRepository()
 
     private val _email = MutableLiveData<String?>()
     val email: LiveData<String?>
@@ -24,6 +31,10 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     private val _validEmail = MutableLiveData<Boolean>()
     val validEmail: LiveData<Boolean>
         get() = _validEmail
+
+    private val _userResponseIsSuccessful = MutableLiveData<Boolean>()
+    val userResponseIsSuccessful: LiveData<Boolean>
+        get() = _userResponseIsSuccessful
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -69,9 +80,26 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _validEmail.value = null
     }
 
+     fun getUserInfo(userAuth: UserAuth) {
+         viewModelScope.launch {
+             val response = userRepository.getUserInfo(userAuth)
+             if(response.isSuccessful){
+                 val editor = sharedPreferences.edit()
+                 editor.also {
+                     it.putString(USER_INFO, Gson().toJson(response.body()))
+                     it.commit()
+                 }
+                 _userResponseIsSuccessful.value = true
+             }else{
+                 _userResponseIsSuccessful.value = false
+             }
+         }
+    }
+
     companion object {
         private const val USERNAME: String = "USERNAME"
         private const val PASSWORD: String = "PASSWORD"
+        private const val USER_INFO: String = "USER_INFO"
         private const val SHARED_PREFERENCES_NAME: String = "PREFERENCE_NAME"
         private const val EMAIL_REGEX: String = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
     }

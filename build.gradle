@@ -2,6 +2,9 @@
 buildscript {
     ext {
         navigationVersion = '2.5.0'
+        retrofit_version = '2.9.0'
+        okhttp_logger_version = '4.10.0'
+        gson_version = '2.9.0'
     }
     repositories {
         google()
