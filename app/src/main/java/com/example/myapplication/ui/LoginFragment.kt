@@ -45,10 +45,7 @@ class LoginFragment : Fragment() {
                 goToTermsAndConditions()
             }
         }
-        loginViewModel.retrieveSavedUser()
         emptyFieldsObserver()
-        retrieveSavedEmailObserver()
-        retrieveSavedPasswordObserver()
         validEmailObserver()
         userResponseObserver()
     }
@@ -63,22 +60,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun retrieveSavedEmailObserver() {
-        loginViewModel.email.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.firstNameEdit.setText(it)
-            }
-        }
-    }
-
-    private fun retrieveSavedPasswordObserver() {
-        loginViewModel.password.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.lastNameEdit.setText(it)
-            }
-        }
-    }
-
     private fun validEmailObserver() {
         loginViewModel.validEmail.observe(viewLifecycleOwner) {
             if (it == true) {
@@ -89,7 +70,6 @@ class LoginFragment : Fragment() {
                 }
             } else {
                 binding.firstNameEdit.error = getString(R.string.invalid_email)
-                loginViewModel.resetValidEmailValue()
             }
         }
     }
