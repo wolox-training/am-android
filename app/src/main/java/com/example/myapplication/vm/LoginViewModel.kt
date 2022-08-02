@@ -29,8 +29,15 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val userResponseIsSuccessful: LiveData<Boolean>
         get() = _userResponseIsSuccessful
 
+    private val _userResponseException= MutableLiveData<Boolean>()
+    val userResponseException: LiveData<Boolean>
+        get() = _userResponseException
+
     private val sharedPreferences: SharedPreferences =
-        app.applicationContext.getSharedPreferences(BuildConfig.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        app.applicationContext.getSharedPreferences(
+            BuildConfig.SHARED_PREFERENCES_NAME,
+            Context.MODE_PRIVATE
+        )
 
     fun fieldsValuesValidation(emailValue: String, passwordValue: String) {
         if (emailValue.isEmpty() || passwordValue.isEmpty()) {
@@ -50,22 +57,26 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _emptyFieldsError.value = null
     }
 
-     fun getUserInfo(userAuth: UserAuth) {
-         viewModelScope.launch {
-             val response = userRepository.getUserInfo(userAuth)
-             if(response.isSuccessful){
-                 val editor = sharedPreferences.edit()
-                 editor.also {
-                     it.putString(USER_INFO, Gson().toJson(response.body()))
-                     it.putString(USERNAME, userAuth.email)
-                     it.putString(PASSWORD, userAuth.password)
-                     it.commit()
-                 }
-                 _userResponseIsSuccessful.value = true
-             }else{
-                 _userResponseIsSuccessful.value = false
-             }
-         }
+    fun getUserInfo(userAuth: UserAuth) {
+        viewModelScope.launch {
+            try {
+                val response = userRepository.getUserInfo(userAuth)
+                if (response.isSuccessful) {
+                    val editor = sharedPreferences.edit()
+                    editor.also {
+                        it.putString(USER_INFO, Gson().toJson(response.body()))
+                        it.putString(USERNAME, userAuth.email)
+                        it.putString(PASSWORD, userAuth.password)
+                        it.commit()
+                    }
+                    _userResponseIsSuccessful.value = true
+                } else {
+                    _userResponseIsSuccessful.value = false
+                }
+            } catch (e: Exception) {
+                _userResponseException.value = true
+            }
+        }
     }
 
     companion object {

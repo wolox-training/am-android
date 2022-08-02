@@ -48,6 +48,7 @@ class LoginFragment : Fragment() {
         emptyFieldsObserver()
         validEmailObserver()
         userResponseObserver()
+        responseExceptionObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -66,6 +67,7 @@ class LoginFragment : Fragment() {
                 with(binding) {
                     val emailText = firstNameEdit.text.toString()
                     val passwordText = lastNameEdit.text.toString()
+                    binding.progressBar.visibility = View.VISIBLE
                     loginViewModel.getUserInfo(UserAuth(emailText, passwordText))
                 }
             } else {
@@ -77,13 +79,23 @@ class LoginFragment : Fragment() {
     private fun userResponseObserver() {
         loginViewModel.userResponseIsSuccessful.observe(viewLifecycleOwner) {
             if (it == true) {
-                Toast.makeText(context, SUCCESS, Toast.LENGTH_SHORT)
-                    .show()
+                binding.progressBar.visibility = View.GONE
                 this.findNavController().navigate(
                     LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
                 )
             } else {
+                binding.progressBar.visibility = View.GONE
                 Toast.makeText(context, FAILURE, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    private fun responseExceptionObserver() {
+        loginViewModel.userResponseException.observe(viewLifecycleOwner) {
+            it?.let {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(context, INTERNET, Toast.LENGTH_SHORT)
                     .show()
             }
         }
@@ -103,7 +115,7 @@ class LoginFragment : Fragment() {
 
     companion object {
         private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
-        private const val SUCCESS: String = "Success"
-        private const val FAILURE: String = "Failure"
+        private const val FAILURE: String = "Invalid credentials"
+        private const val INTERNET: String = "Internet connection required"
     }
 }
