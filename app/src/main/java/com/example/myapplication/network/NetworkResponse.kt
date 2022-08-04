@@ -1,5 +1,7 @@
 package com.example.myapplication.network
 
+import retrofit2.Response
+
 sealed class NetworkResponse<T> {
 
     /**
@@ -25,4 +27,23 @@ sealed class NetworkResponse<T> {
      * [Throwable] object
      */
     data class Failure<T>(val t: Throwable) : NetworkResponse<T>()
+}
+
+object NetworkRequestHandler {
+
+    /**
+     * Static method that allows to execute requests from a [suspend] function of [Response] type
+     * and returns a [NetworkResponse] object depending on HTTP response.
+     */
+    suspend fun <T : Response<*>> safeApiCall(block: suspend () -> T): NetworkResponse<T> =
+        try {
+            val response = block.invoke()
+            if (response.isSuccessful) {
+                NetworkResponse.Success(response)
+            } else {
+                NetworkResponse.Error(response)
+            }
+        } catch (t: Throwable) {
+            NetworkResponse.Failure(t)
+        }
 }

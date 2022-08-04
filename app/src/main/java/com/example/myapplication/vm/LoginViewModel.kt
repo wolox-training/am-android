@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BuildConfig
+import com.example.myapplication.network.NetworkResponse
 import com.example.myapplication.network.UserRepository
 import com.example.myapplication.network.data.UserAuth
 import com.example.myapplication.utils.NetworkResponseState
@@ -84,22 +85,23 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun getUserInfo(userAuth: UserAuth) {
         viewModelScope.launch {
-            try {
-                val response = userRepository.getUserInfo(userAuth)
-                if (response.isSuccessful) {
+            when (val response = userRepository.getUserInfo(userAuth)) {
+                is NetworkResponse.Success -> {
                     val editor = sharedPreferences.edit()
                     editor.also {
-                        it.putString(USER_INFO, Gson().toJson(response.body()))
+                        it.putString(USER_INFO, Gson().toJson(response.response))
                         it.putString(USERNAME, userAuth.email)
                         it.putString(PASSWORD, userAuth.password)
                         it.commit()
                     }
                     _userResponse.value = NetworkResponseState.SUCCESS
-                } else {
+                }
+                is NetworkResponse.Error -> {
                     _userResponse.value = NetworkResponseState.INVALID_CREDENTIALS
                 }
-            } catch (e: Exception) {
-                _userResponse.value = NetworkResponseState.EXCEPTION
+                else -> {
+                    _userResponse.value = NetworkResponseState.EXCEPTION
+                }
             }
         }
     }

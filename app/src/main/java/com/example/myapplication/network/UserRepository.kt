@@ -9,8 +9,8 @@ import retrofit2.Response
 
 class UserRepository {
     private val api = ApiBuilder(BuildConfig.WOLOX_API_URL).create(UserAPI::class.java)
-    suspend fun getUserInfo(userAuth: UserAuth) : Response<UserInfo> =
+    suspend fun getUserInfo(userAuth: UserAuth): NetworkResponse<Response<UserInfo>> =
         withContext(Dispatchers.IO) {
-            api.getUserInfo(userAuth)
+            NetworkRequestHandler.safeApiCall { api.getUserInfo(userAuth) }
         }
 }
