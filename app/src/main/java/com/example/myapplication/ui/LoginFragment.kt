@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.network.data.UserAuth
+import com.example.myapplication.utils.NetworkResponseState
 import com.example.myapplication.vm.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -48,7 +49,6 @@ class LoginFragment : Fragment() {
         emptyFieldsObserver()
         validEmailObserver()
         userResponseObserver()
-        responseExceptionObserver()
     }
 
     private fun emptyFieldsObserver() {
@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
                     val emailText = firstNameEdit.text.toString()
                     val passwordText = lastNameEdit.text.toString()
                     binding.progressBar.visibility = View.VISIBLE
-                    loginViewModel.getUserInfo(UserAuth(emailText, passwordText))
+                    loginViewModel.statRequest(UserAuth(emailText, passwordText))
                 }
             } else {
                 binding.firstNameEdit.error = getString(R.string.invalid_email)
@@ -77,26 +77,38 @@ class LoginFragment : Fragment() {
     }
 
     private fun userResponseObserver() {
-        loginViewModel.userResponseIsSuccessful.observe(viewLifecycleOwner) {
-            if (it == true) {
-                binding.progressBar.visibility = View.GONE
-                this.findNavController().navigate(
-                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
-                )
-            } else {
-                binding.progressBar.visibility = View.GONE
-                Toast.makeText(context, FAILURE, Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-    }
-
-    private fun responseExceptionObserver() {
-        loginViewModel.userResponseException.observe(viewLifecycleOwner) {
-            it?.let {
-                binding.progressBar.visibility = View.GONE
-                Toast.makeText(context, INTERNET, Toast.LENGTH_SHORT)
-                    .show()
+        loginViewModel.userResponse.observe(viewLifecycleOwner) { responseState ->
+            binding.progressBar.visibility = View.GONE
+            when (responseState) {
+                NetworkResponseState.SUCCESS -> {
+                    this.findNavController().navigate(
+                        LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
+                    )
+                }
+                NetworkResponseState.INVALID_CREDENTIALS -> {
+                    Toast.makeText(
+                        context,
+                        CREDENTIALS,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                NetworkResponseState.NO_INTERNET_CONNECTION -> {
+                    Toast.makeText(
+                        context,
+                        INTERNET,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                NetworkResponseState.EXCEPTION -> {
+                    Toast.makeText(
+                        context,
+                        INTERNET,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
         }
     }
@@ -115,7 +127,7 @@ class LoginFragment : Fragment() {
 
     companion object {
         private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
-        private const val FAILURE: String = "Invalid credentials"
+        private const val CREDENTIALS: String = "Invalid credentials"
         private const val INTERNET: String = "Internet connection required"
     }
 }

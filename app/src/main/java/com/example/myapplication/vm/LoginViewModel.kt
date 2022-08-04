@@ -3,6 +3,8 @@ package com.example.myapplication.vm
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.network.UserRepository
 import com.example.myapplication.network.data.UserAuth
+import com.example.myapplication.utils.NetworkResponseState
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
@@ -25,13 +28,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     val validEmail: LiveData<Boolean>
         get() = _validEmail
 
-    private val _userResponseIsSuccessful = MutableLiveData<Boolean>()
-    val userResponseIsSuccessful: LiveData<Boolean>
-        get() = _userResponseIsSuccessful
-
-    private val _userResponseException= MutableLiveData<Boolean>()
-    val userResponseException: LiveData<Boolean>
-        get() = _userResponseException
+    private val _userResponse = MutableLiveData<NetworkResponseState>()
+    val userResponse: LiveData<NetworkResponseState>
+        get() = _userResponse
 
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(
@@ -57,7 +56,33 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _emptyFieldsError.value = null
     }
 
-    fun getUserInfo(userAuth: UserAuth) {
+    fun statRequest(userAuth: UserAuth) {
+        val deviceOnline = isOnline(getApplication())
+        if (deviceOnline) {
+            getUserInfo(userAuth)
+        } else {
+            _userResponse.value = NetworkResponseState.NO_INTERNET_CONNECTION
+        }
+    }
+
+    private fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities =
+            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if (capabilities != null) {
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                return true
+            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun getUserInfo(userAuth: UserAuth) {
         viewModelScope.launch {
             try {
                 val response = userRepository.getUserInfo(userAuth)
@@ -69,12 +94,12 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                         it.putString(PASSWORD, userAuth.password)
                         it.commit()
                     }
-                    _userResponseIsSuccessful.value = true
+                    _userResponse.value = NetworkResponseState.SUCCESS
                 } else {
-                    _userResponseIsSuccessful.value = false
+                    _userResponse.value = NetworkResponseState.INVALID_CREDENTIALS
                 }
             } catch (e: Exception) {
-                _userResponseException.value = true
+                _userResponse.value = NetworkResponseState.EXCEPTION
             }
         }
     }
