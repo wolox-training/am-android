@@ -72,13 +72,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         val capabilities =
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                return true
-            }
+            return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
         }
         return false
     }

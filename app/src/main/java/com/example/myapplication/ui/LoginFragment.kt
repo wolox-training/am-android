@@ -101,10 +101,10 @@ class LoginFragment : Fragment() {
                     )
                         .show()
                 }
-                NetworkResponseState.EXCEPTION -> {
+                else -> {
                     Toast.makeText(
                         context,
-                        INTERNET,
+                        EXCEPTION,
                         Toast.LENGTH_SHORT
                     )
                         .show()
@@ -129,5 +129,6 @@ class LoginFragment : Fragment() {
         private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
         private const val CREDENTIALS: String = "Invalid credentials"
         private const val INTERNET: String = "Internet connection required"
+        private const val EXCEPTION: String = "Something has failed, try again later"
     }
 }
