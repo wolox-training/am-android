@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.network.data.UserAuth
+import com.example.myapplication.utils.NetworkResponseState
 import com.example.myapplication.vm.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -66,7 +67,8 @@ class LoginFragment : Fragment() {
                 with(binding) {
                     val emailText = firstNameEdit.text.toString()
                     val passwordText = lastNameEdit.text.toString()
-                    loginViewModel.getUserInfo(UserAuth(emailText, passwordText))
+                    binding.progressBar.visibility = View.VISIBLE
+                    loginViewModel.statRequest(UserAuth(emailText, passwordText))
                 }
             } else {
                 binding.firstNameEdit.error = getString(R.string.invalid_email)
@@ -75,16 +77,38 @@ class LoginFragment : Fragment() {
     }
 
     private fun userResponseObserver() {
-        loginViewModel.userResponseIsSuccessful.observe(viewLifecycleOwner) {
-            if (it == true) {
-                Toast.makeText(context, SUCCESS, Toast.LENGTH_SHORT)
-                    .show()
-                this.findNavController().navigate(
-                    LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
-                )
-            } else {
-                Toast.makeText(context, FAILURE, Toast.LENGTH_SHORT)
-                    .show()
+        loginViewModel.userResponse.observe(viewLifecycleOwner) { responseState ->
+            binding.progressBar.visibility = View.GONE
+            when (responseState) {
+                NetworkResponseState.SUCCESS -> {
+                    this.findNavController().navigate(
+                        LoginFragmentDirections.actionLoginFragmentToHomePageFragment()
+                    )
+                }
+                NetworkResponseState.INVALID_CREDENTIALS -> {
+                    Toast.makeText(
+                        context,
+                        CREDENTIALS,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                NetworkResponseState.NO_INTERNET_CONNECTION -> {
+                    Toast.makeText(
+                        context,
+                        INTERNET,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                else -> {
+                    Toast.makeText(
+                        context,
+                        EXCEPTION,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
         }
     }
@@ -103,7 +127,8 @@ class LoginFragment : Fragment() {
 
     companion object {
         private const val URL_WOLOX: String = "https://www.wolox.com.ar/"
-        private const val SUCCESS: String = "Success"
-        private const val FAILURE: String = "Failure"
+        private const val CREDENTIALS: String = "Invalid credentials"
+        private const val INTERNET: String = "Internet connection required"
+        private const val EXCEPTION: String = "Something has failed, try again later"
     }
 }
