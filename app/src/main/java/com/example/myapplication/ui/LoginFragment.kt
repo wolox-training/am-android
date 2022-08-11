@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
                     val emailText = firstNameEdit.text.toString()
                     val passwordText = lastNameEdit.text.toString()
                     binding.progressBar.visibility = View.VISIBLE
-                    loginViewModel.statRequest(UserAuth(emailText, passwordText))
+                    loginViewModel.startRequest(UserAuth(emailText, passwordText))
                 }
             } else {
                 binding.firstNameEdit.error = getString(R.string.invalid_email)
@@ -76,7 +76,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun userResponseObserver() {
+    fun userResponseObserver() {
         loginViewModel.userResponse.observe(viewLifecycleOwner) { responseState ->
             binding.progressBar.visibility = View.GONE
             when (responseState) {
@@ -86,31 +86,25 @@ class LoginFragment : Fragment() {
                     )
                 }
                 NetworkResponseState.INVALID_CREDENTIALS -> {
-                    Toast.makeText(
-                        context,
-                        CREDENTIALS,
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                   showToast(CREDENTIALS)
                 }
                 NetworkResponseState.NO_INTERNET_CONNECTION -> {
-                    Toast.makeText(
-                        context,
-                        INTERNET,
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    showToast(INTERNET)
                 }
                 else -> {
-                    Toast.makeText(
-                        context,
-                        EXCEPTION,
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                   showToast(EXCEPTION)
                 }
             }
         }
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(
+            context,
+            message,
+            Toast.LENGTH_SHORT
+        )
+            .show()
     }
 
     private fun goToSignUp() {
