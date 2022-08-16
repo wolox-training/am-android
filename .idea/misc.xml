@@ -7,6 +7,8 @@
         <entry key="app/src/main/res/drawable/gradient_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1915" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_collection_object.xml" value="0.1403242147922999" />
+        <entry key="app/src/main/res/layout/fragment_collection_option.xml" value="0.25677083333333334" />
         <entry key="app/src/main/res/layout/fragment_home_page.xml" value="0.2526041666666667" />
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_signup.xml" value="0.2526041666666667" />

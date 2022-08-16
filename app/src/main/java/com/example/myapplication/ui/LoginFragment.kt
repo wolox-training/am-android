@@ -76,7 +76,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    fun userResponseObserver() {
+    private fun userResponseObserver() {
         loginViewModel.userResponse.observe(viewLifecycleOwner) { responseState ->
             binding.progressBar.visibility = View.GONE
             when (responseState) {
