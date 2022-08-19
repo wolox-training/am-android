@@ -57,7 +57,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
         _emptyFieldsError.value = null
     }
 
-    fun statRequest(userAuth: UserAuth) {
+    fun startRequest(userAuth: UserAuth) {
         val deviceOnline = isOnline(getApplication())
         if (deviceOnline) {
             getUserInfo(userAuth)
@@ -85,7 +85,7 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 is NetworkResponse.Success -> {
                     val editor = sharedPreferences.edit()
                     editor.also {
-                        it.putString(USER_INFO, Gson().toJson(response.response))
+                        it.putString(USER_INFO, Gson().toJson(response.response.body()))
                         it.putString(USERNAME, userAuth.email)
                         it.putString(PASSWORD, userAuth.password)
                         it.commit()
