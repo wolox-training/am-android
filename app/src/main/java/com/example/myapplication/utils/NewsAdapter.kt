@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 
-class NewsAdapter(private val dataSet: Array<String>) :
+class NewsAdapter(private val dataSet: List<String>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     /**

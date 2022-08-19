@@ -11,6 +11,5 @@
     <string name="all_fields_required">All fields are required</string>
     <string name="wolox">Wolox</string>
     <string name="news_title_holder">Ali Connors</string>
-    <string name="news_body_holder">I\'ll be in your neighborhood doing errands..</string>
     <string name="news_time_holder">15m</string>
 </resources>

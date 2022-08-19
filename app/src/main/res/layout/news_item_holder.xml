@@ -1,60 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/small_margin">
 
     <ImageView
         android:id="@+id/news_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_margin="@dimen/small_margin"
         android:background="@color/grey"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="@dimen/small_margin" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/news_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="@dimen/small_margin"
+        android:paddingEnd="@dimen/small_margin"
         android:text="@string/news_title_holder"
-        app:layout_constraintStart_toEndOf="@id/news_image"
-        app:layout_constraintTop_toTopOf="@id/news_image"
         android:textSize="@dimen/text_large_size"
-        android:paddingStart="@dimen/small_margin"/>
+        app:layout_constraintStart_toEndOf="@id/news_image"
+        app:layout_constraintTop_toTopOf="@id/news_image" />
 
     <TextView
         android:id="@+id/news_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/news_body_holder"
-        app:layout_constraintStart_toEndOf="@id/news_image"
-        app:layout_constraintTop_toBottomOf="@id/news_title"
-        app:layout_constraintEnd_toStartOf="@id/news_like"
         android:maxLines="4"
+        android:paddingStart="@dimen/small_margin"
+        android:paddingEnd="@dimen/small_margin"
+        android:textAlignment="textStart"
         android:textSize="@dimen/text_large_size"
-        android:paddingStart="@dimen/small_margin"/>
+        app:layout_constraintStart_toEndOf="@id/news_image"
+        app:layout_constraintTop_toBottomOf="@id/news_title" />
 
     <TextView
         android:id="@+id/news_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/news_time_holder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/news_like"
-        android:textSize="@dimen/text_large_size"
+        android:paddingStart="@dimen/small_margin"
+        android:paddingTop="@dimen/small_margin"
         android:paddingEnd="@dimen/small_margin"
-        android:paddingTop="@dimen/small_margin"/>
+        android:text="@string/news_time_holder"
+        android:textSize="@dimen/text_large_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/news_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/news_time"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="@dimen/small_margin"
         android:src="@drawable/ic_like_off"
-        android:padding="@dimen/small_margin" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/news_time" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
