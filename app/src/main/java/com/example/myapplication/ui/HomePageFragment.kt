@@ -1,19 +1,14 @@
 package com.example.myapplication.ui
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.databinding.DataBindingUtil.setContentView
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentHomePageBinding
-import com.example.myapplication.databinding.FragmentLoginBinding
 import com.example.myapplication.utils.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
