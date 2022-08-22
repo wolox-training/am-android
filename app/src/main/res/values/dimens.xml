@@ -3,4 +3,6 @@
     <dimen name="small_margin">10dp</dimen>
     <dimen name="text_medium_size">16sp</dimen>
     <dimen name="text_large_size">20sp</dimen>
+    <dimen name="zero">0dp</dimen>
+    <dimen name="image_size">60dp</dimen>
 </resources>

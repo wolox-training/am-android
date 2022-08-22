@@ -1,32 +1,28 @@
 package com.example.myapplication.utils
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.databinding.FragmentTabBinding
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.myapplication.ui.NewsEmptyFragment
+import com.example.myapplication.ui.NewsTabFragment
+import com.example.myapplication.ui.ProfileTabFragment
+import kotlin.random.Random
 
-class ViewPagerAdapter(
-    private val labelList: MutableList<String>
-    ) : RecyclerView.Adapter<ViewPagerAdapter.ViewPagerHolder>() {
+class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerHolder {
-        val binding = FragmentTabBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewPagerHolder(binding)
-    }
+    override fun getItemCount(): Int = 2
 
-    override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
-        val label = labelList[position]
-        holder.bind(label)
-    }
-
-    override fun getItemCount(): Int {
-        return labelList.size
-    }
-
-    class ViewPagerHolder(private var itemHolderBinding: FragmentTabBinding) :
-        RecyclerView.ViewHolder(itemHolderBinding.root) {
-        fun bind(label: String) {
-            itemHolderBinding.label.text = label
+    override fun createFragment(position: Int): Fragment {
+        // Return a NEW fragment instance in createFragment(int)
+        return when (position) {
+            0 -> {
+                val newsRandomSelector = Random.nextBoolean()
+                if (newsRandomSelector) {
+                    NewsTabFragment()
+                } else {
+                    NewsEmptyFragment()
+                }
+            }
+            else ->  ProfileTabFragment()
         }
     }
 }
