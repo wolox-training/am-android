@@ -7,5 +7,6 @@ data class UserInfo(
     val email: String,
     val name: String,
     val nickname: String,
+    @SerializedName("uid") val userId: String,
     @SerializedName("created_at") val creationDate: String
 )

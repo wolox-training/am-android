@@ -8,8 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.network.data.SingleNews
 
-class NewsAdapter(private val dataSet: List<String>) :
+class NewsAdapter(private val dataSet: List<SingleNews>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -29,7 +30,7 @@ class NewsAdapter(private val dataSet: List<String>) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
 
-        viewHolder.textView.text = dataSet[position]
+        viewHolder.textView.text = dataSet[position].comment
     }
 
     override fun getItemCount() = dataSet.size
