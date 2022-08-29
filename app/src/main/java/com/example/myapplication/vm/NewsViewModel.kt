@@ -10,9 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.network.NetworkResponse
 import com.example.myapplication.network.UserRepository
-import com.example.myapplication.network.data.UserInfo
 import com.example.myapplication.network.data.UserNews
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 
 class NewsViewModel(app: Application) : AndroidViewModel(app) {
@@ -30,21 +28,27 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
         )
 
     fun retrieveSavedUser() {
-        val userJson: String? = sharedPreferences.getString(USER_INFO, "")
-        val userGson = Gson()
-        val selectedUser: UserInfo = userGson.fromJson(userJson, UserInfo::class.java)
-        with(selectedUser) {
-            getUserNews(email, userId, name)
+        val userAccessToken: String? = sharedPreferences.getString(ACCESS_TOKEN, "")
+        val userUid: String? = sharedPreferences.getString(UID, "")
+        val userClient: String? = sharedPreferences.getString(CLIENT, "")
+        if (userAccessToken != null || userUid != null || userClient != null) {
+            getUserNews(userAccessToken!!, userUid!!, userClient!!)
         }
     }
 
     private fun getUserNews(
         accessToken: String,
         userId: String,
-        client: String,
+        client: String
     ) {
         viewModelScope.launch {
-            when (val response = userRepository.getUserNews(accessToken, userId, client)) {
+            val page = 1
+            // val headers = mapOf(
+            //     "Access-Token" to accessToken,
+            //     "Uid" to userId,
+            //     "Client" to client
+            // )
+            when (val response = userRepository.getUserNews(page, /*headers*/)) {
                 is NetworkResponse.Success -> {
                     _newsResponse.value = response.response.body()
                 }
@@ -55,6 +59,8 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     companion object {
-        private const val USER_INFO: String = "USER_INFO"
+        private const val UID: String = "UID"
+        private const val CLIENT: String = "CLIENT"
+        private const val ACCESS_TOKEN: String = "ACCESS_TOKEN"
     }
 }
