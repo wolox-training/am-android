@@ -21,6 +21,9 @@ class NewsTabFragment : Fragment() {
 
     private lateinit var newsViewModel: NewsViewModel
 
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,13 +47,33 @@ class NewsTabFragment : Fragment() {
         newsViewModel.newsResponse.observe(viewLifecycleOwner) {
             it?.let {
                 val adapter = NewsAdapter(it.page)
-                val dataList = mutableListOf(it.page.size)
                 val layoutManager = LinearLayoutManager(context)
+
                 with(binding) {
                     newsList.adapter = adapter
-                    newsList.addOnScrollListener(OnScrollListener(layoutManager, adapter, dataList))
+                    newsList.addOnScrollListener(object : OnScrollListener(layoutManager) {
+                        override fun isLastPage(): Boolean {
+                            return isLastPage
+                        }
+
+                        override fun isLoading(): Boolean {
+                            return isLoading
+                        }
+
+                        override fun loadMoreItems() {
+                            isLoading = true
+                            newsViewModel.getUserNews(it.)
+                            getMoreItems()
+                        }
+                    })
                 }
             }
         }
+    }
+
+
+    fun getMoreItems() {
+        isLoading = false
+        binding.newsList.addData(list)
     }
 }

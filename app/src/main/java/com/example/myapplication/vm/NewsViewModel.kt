@@ -32,17 +32,17 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
         val userUid: String? = sharedPreferences.getString(UID, "")
         val userClient: String? = sharedPreferences.getString(CLIENT, "")
         if (userAccessToken != null || userUid != null || userClient != null) {
-            getUserNews(userAccessToken!!, userUid!!, userClient!!)
+            getUserNews(userAccessToken!!, userUid!!, userClient!!, 1)
         }
     }
 
-    private fun getUserNews(
+    fun getUserNews(
         accessToken: String,
         userId: String,
-        client: String
+        client: String,
+        page: Int
     ) {
         viewModelScope.launch {
-            val page = 1
             // val headers = mapOf(
             //     "Access-Token" to accessToken,
             //     "Uid" to userId,
