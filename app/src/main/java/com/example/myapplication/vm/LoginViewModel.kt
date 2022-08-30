@@ -85,9 +85,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 is NetworkResponse.Success -> {
                     val editor = sharedPreferences.edit()
                     editor.also {
-                        it.putString(UID, Gson().toJson(response.response.headers()["Uid"]))
-                        it.putString(CLIENT, Gson().toJson(response.response.headers()["Client"]))
-                        it.putString(ACCESS_TOKEN, Gson().toJson(response.response.headers()["Access-Token"]))
+                        it.putString(UID, response.response.headers()["Uid"])
+                        it.putString(CLIENT, response.response.headers()["Client"])
+                        it.putString(ACCESS_TOKEN, response.response.headers()["Access-Token"])
                         it.putString(USERNAME, userAuth.email)
                         it.putString(PASSWORD, userAuth.password)
                         it.commit()

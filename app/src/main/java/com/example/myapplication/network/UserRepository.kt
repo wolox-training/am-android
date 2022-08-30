@@ -17,9 +17,9 @@ class UserRepository {
 
     suspend fun getUserNews(
         page: Int,
-        // headers: Map<String, String>
+        headers: Map<String, String>
     ): NetworkResponse<Response<UserNews>> =
         withContext(Dispatchers.IO) {
-            NetworkRequestHandler.safeApiCall { api.getUserNews(page, /*headers*/) }
+            NetworkRequestHandler.safeApiCall { api.getUserNews(page, headers) }
         }
 }

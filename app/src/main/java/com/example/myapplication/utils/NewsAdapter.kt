@@ -12,13 +12,6 @@ import com.example.myapplication.network.data.SingleNews
 class NewsAdapter(private val news: List<SingleNews>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
-    fun addData(listItems: ArrayList<SingleNews>) {
-        var size = this.listItems.size
-        this.listItems.addAll(listItems)
-        var sizeNew = this.listItems.size
-        notifyItemRangeChanged(size, sizeNew)
-    }
-
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val newsImage: ImageView
         val newsBody: TextView

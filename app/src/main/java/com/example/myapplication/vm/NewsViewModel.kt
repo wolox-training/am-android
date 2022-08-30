@@ -27,28 +27,30 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
             Context.MODE_PRIVATE
         )
 
-    fun retrieveSavedUser() {
+    fun retrieveSavedUser(
+        page: Int
+    ) {
         val userAccessToken: String? = sharedPreferences.getString(ACCESS_TOKEN, "")
         val userUid: String? = sharedPreferences.getString(UID, "")
         val userClient: String? = sharedPreferences.getString(CLIENT, "")
         if (userAccessToken != null || userUid != null || userClient != null) {
-            getUserNews(userAccessToken!!, userUid!!, userClient!!, 1)
+            getUserNews(userAccessToken!!, userUid!!, userClient!!, page)
         }
     }
 
-    fun getUserNews(
+    private fun getUserNews(
         accessToken: String,
         userId: String,
         client: String,
         page: Int
     ) {
         viewModelScope.launch {
-            // val headers = mapOf(
-            //     "Access-Token" to accessToken,
-            //     "Uid" to userId,
-            //     "Client" to client
-            // )
-            when (val response = userRepository.getUserNews(page, /*headers*/)) {
+            val headers = mapOf(
+                "Access-Token" to accessToken,
+                "Uid" to userId,
+                "Client" to client
+            )
+            when (val response = userRepository.getUserNews(page, headers)) {
                 is NetworkResponse.Success -> {
                     _newsResponse.value = response.response.body()
                 }

@@ -3,26 +3,31 @@ package com.example.myapplication.utils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class OnScrollListener(
-    val layoutManager: LinearLayoutManager)
-    : RecyclerView.OnScrollListener() {
-
-    abstract fun isLastPage(): Boolean
-
-    abstract fun isLoading(): Boolean
+class OnScrollListener(val layoutManager: LinearLayoutManager, val getMoreData: () -> Unit) : RecyclerView.OnScrollListener() {
+    var previousTotal = 0
+    var loading = true
+    val visibleThreshold = 10
+    var firstVisibleItem = 0
+    var visibleItemCount = 0
+    var totalItemCount = 0
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
-        val visibleItemCount = layoutManager.childCount
-        val totalItemCount = layoutManager.itemCount
-        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+        visibleItemCount = recyclerView.childCount
+        totalItemCount = layoutManager.itemCount
+        firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
-        if (!isLoading() && !isLastPage()) {
-            if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                loadMoreItems()
+        if (loading) {
+            if (totalItemCount > previousTotal) {
+                loading = false
+                previousTotal = totalItemCount
             }
         }
+
+        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+            getMoreData
+            loading = true
+        }
     }
-    abstract fun loadMoreItems()
 }
