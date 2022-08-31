@@ -13,7 +13,7 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "WOLOX_API_URL", "\"https://w-android-training.herokuapp.com\""
+        buildConfigField "String", "WOLOX_API_URL", "\"https://w-android-traning-backup2.herokuapp.com\""
         buildConfigField "String", "SHARED_PREFERENCES_NAME", "\"PREFERENCE_NAME\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

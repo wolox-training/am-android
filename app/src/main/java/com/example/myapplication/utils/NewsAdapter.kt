@@ -3,20 +3,26 @@ package com.example.myapplication.utils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.network.data.SingleNews
 
-class NewsAdapter(private val dataSet: List<String>) :
+class NewsAdapter(private val news: MutableList<SingleNews>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView
+        val newsImage: ImageView
+        val newsBody: TextView
+        val newsTitle: TextView
+        val newsTime: TextView
 
         init {
-            textView = view.findViewById(R.id.news_body)
+            newsBody = view.findViewById(R.id.news_body)
+            newsImage = view.findViewById(R.id.news_image)
+            newsTitle = view.findViewById(R.id.news_title)
+            newsTime = view.findViewById(R.id.news_time)
         }
     }
 
@@ -28,9 +34,16 @@ class NewsAdapter(private val dataSet: List<String>) :
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-
-        viewHolder.textView.text = dataSet[position]
+        with(viewHolder) {
+            newsTitle.text = news[position].commenter
+            newsBody.text = news[position].comment
+            newsTime.text = news[position].date
+        }
     }
 
-    override fun getItemCount() = dataSet.size
+    fun addItems(moreNews: List<SingleNews>) {
+        news.addAll(moreNews)
+    }
+
+    override fun getItemCount() = news.size
 }

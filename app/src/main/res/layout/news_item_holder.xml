@@ -20,8 +20,11 @@
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/small_margin"
         android:paddingEnd="@dimen/small_margin"
-        android:text="@string/news_title_holder"
         android:textSize="@dimen/text_large_size"
+        app:layout_constrainedWidth="true"
+        android:gravity="start"
+        android:maxLines="1"
+        app:layout_constraintEnd_toStartOf="@+id/news_time"
         app:layout_constraintStart_toEndOf="@id/news_image"
         app:layout_constraintTop_toTopOf="@id/news_image" />
 
@@ -29,11 +32,13 @@
         android:id="@+id/news_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="4"
+        android:maxLines="3"
         android:paddingStart="@dimen/small_margin"
         android:paddingEnd="@dimen/small_margin"
         android:textAlignment="textStart"
         android:textSize="@dimen/text_large_size"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/news_like"
         app:layout_constraintStart_toEndOf="@id/news_image"
         app:layout_constraintTop_toBottomOf="@id/news_title" />
 
@@ -44,7 +49,6 @@
         android:paddingStart="@dimen/small_margin"
         android:paddingTop="@dimen/small_margin"
         android:paddingEnd="@dimen/small_margin"
-        android:text="@string/news_time_holder"
         android:textSize="@dimen/text_large_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

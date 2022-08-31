@@ -15,14 +15,9 @@ class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         // Return a NEW fragment instance in createFragment(int)
         return when (position) {
             0 -> {
-                val newsRandomSelector = Random.nextBoolean()
-                if (newsRandomSelector) {
-                    NewsTabFragment()
-                } else {
-                    NewsEmptyFragment()
-                }
+                NewsTabFragment()
             }
-            else ->  ProfileTabFragment()
+            else -> ProfileTabFragment()
         }
     }
 }

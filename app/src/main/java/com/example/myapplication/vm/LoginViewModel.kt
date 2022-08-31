@@ -85,7 +85,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
                 is NetworkResponse.Success -> {
                     val editor = sharedPreferences.edit()
                     editor.also {
-                        it.putString(USER_INFO, Gson().toJson(response.response.body()))
+                        it.putString(UID, response.response.headers()["Uid"])
+                        it.putString(CLIENT, response.response.headers()["Client"])
+                        it.putString(ACCESS_TOKEN, response.response.headers()["Access-Token"])
                         it.putString(USERNAME, userAuth.email)
                         it.putString(PASSWORD, userAuth.password)
                         it.commit()
@@ -105,7 +107,9 @@ class LoginViewModel(app: Application) : AndroidViewModel(app) {
     companion object {
         private const val USERNAME: String = "USERNAME"
         private const val PASSWORD: String = "PASSWORD"
-        private const val USER_INFO: String = "USER_INFO"
+        private const val UID: String = "UID"
+        private const val CLIENT: String = "CLIENT"
+        private const val ACCESS_TOKEN: String = "ACCESS_TOKEN"
         private const val EMAIL_REGEX: String = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
     }
 }
