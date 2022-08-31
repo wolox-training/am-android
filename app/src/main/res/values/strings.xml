@@ -10,4 +10,5 @@
     <string name="invalid_email">Invalid email address</string>
     <string name="all_fields_required">All fields are required</string>
     <string name="wolox">Wolox</string>
+    <string name="no_news_error">There is no news to show, try again later!</string>
 </resources>

@@ -15,8 +15,8 @@ class OnScrollListener(val layoutManager: LinearLayoutManager, val getMoreData: 
         super.onScrolled(recyclerView, dx, dy)
 
         visibleItemCount = recyclerView.childCount
-        totalItemCount = layoutManager.itemCount
-        firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+        totalItemCount = recyclerView.layoutManager!!.itemCount
+        firstVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
 
         if (loading) {
             if (totalItemCount > previousTotal) {
@@ -26,7 +26,7 @@ class OnScrollListener(val layoutManager: LinearLayoutManager, val getMoreData: 
         }
 
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-            getMoreData
+            getMoreData.invoke()
             loading = true
         }
     }

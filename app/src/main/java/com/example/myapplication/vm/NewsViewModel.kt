@@ -11,6 +11,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.network.NetworkResponse
 import com.example.myapplication.network.UserRepository
 import com.example.myapplication.network.data.UserNews
+import com.example.myapplication.utils.NetworkResponseState
 import kotlinx.coroutines.launch
 
 class NewsViewModel(app: Application) : AndroidViewModel(app) {
@@ -21,14 +22,18 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
     val newsResponse: LiveData<UserNews>
         get() = _newsResponse
 
+    private val _newsFailedRequest = MutableLiveData<NetworkResponseState>()
+    val newsFailedRequest: LiveData<NetworkResponseState>
+        get() = _newsFailedRequest
+
     private val sharedPreferences: SharedPreferences =
         app.applicationContext.getSharedPreferences(
             BuildConfig.SHARED_PREFERENCES_NAME,
             Context.MODE_PRIVATE
         )
 
-    fun retrieveSavedUser(
-        page: Int
+    fun getMoreNews(
+        page: Int,
     ) {
         val userAccessToken: String? = sharedPreferences.getString(ACCESS_TOKEN, "")
         val userUid: String? = sharedPreferences.getString(UID, "")
@@ -42,7 +47,7 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
         accessToken: String,
         userId: String,
         client: String,
-        page: Int
+        page: Int,
     ) {
         viewModelScope.launch {
             val headers = mapOf(
@@ -55,6 +60,7 @@ class NewsViewModel(app: Application) : AndroidViewModel(app) {
                     _newsResponse.value = response.response.body()
                 }
                 else -> {
+                    _newsFailedRequest.value = NetworkResponseState.EXCEPTION
                 }
             }
         }

@@ -14,6 +14,8 @@ import com.example.myapplication.vm.NewsViewModel
 
 class NewsTabFragment : Fragment() {
 
+    var currentPage = 1
+
     private lateinit var binding: FragmentNewsTabBinding
 
     private lateinit var newsViewModel: NewsViewModel
@@ -21,33 +23,57 @@ class NewsTabFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNewsTabBinding.inflate(inflater, container, false)
         newsViewModel = ViewModelProvider(this)[NewsViewModel::class.java]
-        newsViewModel.retrieveSavedUser(1)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        newsViewModel.getMoreNews(currentPage)
         val swipeToRefresh = binding.swipeToRefresh
+        val adapter = NewsAdapter(mutableListOf())
+        val layoutManager = LinearLayoutManager(context)
         swipeToRefresh.setOnRefreshListener {
-            newsViewModel.retrieveSavedUser(1)
             swipeToRefresh.isRefreshing = false
         }
-        emptyFieldsObserver()
+        with(binding) {
+            newsList.adapter = adapter
+            newsList.addOnScrollListener(
+                OnScrollListener(layoutManager) { newsViewModel.getMoreNews(currentPage) }
+            )
+        }
+        newsResponseObserver()
+        newsFailedRequestObserver()
     }
 
-    private fun emptyFieldsObserver() {
+    private fun newsResponseObserver() {
         newsViewModel.newsResponse.observe(viewLifecycleOwner) {
             it?.let {
-                val adapter = NewsAdapter(it.page)
-                val layoutManager = LinearLayoutManager(context)
+                currentPage++
                 with(binding) {
-                    newsList.adapter = adapter
-                    newsList.addOnScrollListener(
-                        OnScrollListener(layoutManager) { newsViewModel.retrieveSavedUser(it.nextPage) }
-                    )
+                    if (newsList.visibility == View.GONE) {
+                        noNewsError.visibility = View.GONE
+                        newsList.visibility = View.VISIBLE
+                    }
+                    (newsList.adapter as NewsAdapter).addItems(it.page)
+                    (newsList.adapter as NewsAdapter).notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
+    private fun newsFailedRequestObserver() {
+        newsViewModel.newsFailedRequest.observe(viewLifecycleOwner) {
+            it?.let {
+                if (currentPage == 1) {
+                    with(binding) {
+                        if (newsList.visibility == View.VISIBLE) {
+                            newsList.visibility = View.GONE
+                            noNewsError.visibility = View.VISIBLE
+                        }
+                    }
                 }
             }
         }

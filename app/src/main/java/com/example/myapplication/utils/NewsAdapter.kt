@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.network.data.SingleNews
 
-class NewsAdapter(private val news: List<SingleNews>) :
+class NewsAdapter(private val news: MutableList<SingleNews>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -39,6 +39,10 @@ class NewsAdapter(private val news: List<SingleNews>) :
             newsBody.text = news[position].comment
             newsTime.text = news[position].date
         }
+    }
+
+    fun addItems(moreNews: List<SingleNews>) {
+        news.addAll(moreNews)
     }
 
     override fun getItemCount() = news.size
